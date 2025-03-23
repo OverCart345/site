@@ -191,7 +191,11 @@ foreach ($images as $image): ?&gt;
       <ul>
         <li>
           <strong>0. Создать подключение</strong><br>
-          <pre><code class="php">$conn = new mysqli($host, $user, $password, $dbname);</code></pre>
+          <pre><code class="php">$host = 'MySQL-8.2'; // Хост базы данных
+$user = 'root'; // Имя пользователя
+$password = ''; // Пароль (по умолчанию пустой)
+$dbname = 'Magazin'; // Название базы данных
+$conn = new mysqli($host, $user, $password, $dbname);</code></pre>
         </li>
         <li>
           <strong>1. СОЗДАНИЕ ЗАПРОСА</strong><br>

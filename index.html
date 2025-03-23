@@ -1,24 +1,239 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Layout</title>
+    <title>Гайд для учеников</title>
     <style>
-
-
-
-
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .section {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #2980b9;
+            margin-top: 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        pre {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+        }
     </style>
 </head>
 <body>
+    <h1>Гайд для учеников по работе с PHP и базами данных</h1>
 
+    <div class="section">
+        <h2>Работа с формами</h2>
+        <pre><code>
+&lt;form method="post"&gt;
+  &lt;input type="text" name="ИМЯ_ПОЛЯ_ВВОДА1"&gt;
+  &lt;input type="text" name="ИМЯ_ПОЛЯ_ВВОДА2"&gt;
+  &lt;input type="text" name="ИМЯ_ПОЛЯ_ВВОДА3"&gt;
+  &lt;input type="text" name="ИМЯ_ПОЛЯ_ВВОДА4"&gt;
+  &lt;input type="submit"&gt;
+&lt;/form&gt;
 
-    <div class="container">
-        
+&lt;?php
+
+/*
+
+ РАБОТА С ФОРМАМИ
+
+ HTML
+ 1. Создать форму с атрибутом method="post"
+ 2. Создаём поля ввода с уникальными именами name=""
+
+ PHP
+ 3. Проверить с помощью if и isset($_POST["ИМЯ_ПОЛЯ_ВВОДА"]) наличие полей ввода
+ 4. Получить в отдельные переменные то, 
+    что ввёл пользователь, с помощью $_POST["ИМЯ_ПОЛЯ_ВВОДА"], ВНУТРИ УСЛОВИЯ.
+    ($ИМЯ_ПЕРЕМЕННОЙ = $_POST["ИМЯ_ПОЛЯ_ВВОДА"])
+ 5. ВНУТРИ УСЛОВИЯ мы можем работать с полученными переменными
+    (Например, подставить в SQL-запрос, или вывести через echo).
+
+    Если нужно работать с ними вне условия, то нужно создать пустые переменные
+    вне условия, а заполнить внутри
+ */
+
+$myKorzinka1 = "";
+$myKorzinka2 = "";
+$myKorzinka3 = "";
+$myKorzinka4 = "";
+
+if(isset($_POST["ИМЯ_ПОЛЯ_ВВОДА1"]) && isset($_POST["ИМЯ_ПОЛЯ_ВВОДА2"])
+ && isset($_POST["ИМЯ_ПОЛЯ_ВВОДА3"]) && isset($_POST["ИМЯ_ПОЛЯ_ВВОДА4"])){
+
+$myKorzinka1 = $_POST["ИМЯ_ПОЛЯ_ВВОДА1"];
+$myKorzinka2 = $_POST["ИМЯ_ПОЛЯ_ВВОДА2"];
+$myKorzinka3 = $_POST["ИМЯ_ПОЛЯ_ВВОДА3"];
+$myKorzinka4 = $_POST["ИМЯ_ПОЛЯ_ВВОДА4"];
+
+echo $myKorzinka1."&lt;br&gt;".$myKorzinka2."&lt;br&gt;".$myKorzinka3."&lt;br&gt;".$myKorzinka4;
+
+}
+
+?&gt;
+        </code></pre>
     </div>
 
+    <div class="section">
+        <h2>Загрузка файлов на сервер</h2>
+        <pre><code>
+&lt;form method="post" enctype="multipart/form-data"&gt;
+&lt;input type="file" name="unicalyName111"&gt;
+&lt;input type="submit"&gt;
+&lt;/form&gt;
+
+&lt;?php
+
+/*
+ ЗАГРУЗКА ФАЙЛОВ НА СЕРВЕР
+
+ HTML
+ 1. Создаём форму с атрибутами method="post" enctype="multipart/form-data"
+ 2. Создать поле ввода с type="file" и уникальным именем name=""
+
+ PHP
+ 3. Проверить с помощью if и isset($_FILES["ИМЯ_ПОЛЯ_ВВОДА"]) наличие поля ввода
+ 4. Записать в переменную путь куда будет сохраняться изображение. ВНУТРИ УСЛОВИЯ
+    ($path = 'upload/'.$_FILES['ИМЯ_ПОЛЯ_ВВОДА']['name'];  Получим upload/myImage.png)
+ 5. Перемещаем наш файл по пути, который лежит в переменной. ВНУТРИ УСЛОВИЯ
+    (move_uploaded_file($_FILES['ИМЯ_ПОЛЯ_ВВОДА']['tmp_name'], $path);)
+
+
+*/
+$path = "";
+if(isset($_FILES["unicalyName111"])){
+  $path = 'upload/'.$_FILES['unicalyName111']['name'];  // upload/myImage.png
+  move_uploaded_file($_FILES['unicalyName111']['tmp_name'], $path);
+}
+
+?&gt;
+        </code></pre>
+    </div>
+
+    <div class="section">
+        <h2>Выгрузка картинок с сервера на сайт</h2>
+        <pre><code>
+$images = array_diff(scandir('upload'), array('..', '.')); 
+
+foreach ($images as $image): ?&gt;
+
+&lt;img src="&lt;?php echo "upload/".$image ?&gt;"&gt;
+  
+&lt;?php endforeach; ?&gt;
+
+/*
+ ВЫГРУЗКА КАРТИНОК С СЕРВЕРА НА САЙТ
+ PHP
+ 1. Получаем все файлы из папки
+    ($images = array_diff(scandir('ИМЯ_ПАПКИ'), array('..', '.')); )
+ 2. Создаём цикл foreach, который проходится по массиву картинок
+    &lt;?php foreach ($images as $image): ?&gt;      
+
+ HTML
+ 3. Выводим картинку в цикле, подставляя путь до неё
+     &lt;img src="&lt;?php echo 'upload/'.$image ?&gt;"&gt;  
+
+ PHP
+ 4. Закрываем цикл
+    &lt;?php endforeach; ?&gt;         
+*/
+        </code></pre>
+    </div>
+
+    <div class="section">
+        <h2>SQL-запросы</h2>
+        <pre><code>
+/* SQL-ЗАПРОСЫ
+
+0. Создать подключение
+    - $conn = new mysqli($host, $user, $password, $dbname);
+
+1. СОЗДАНИЕ ЗАПРОСА
+   - Нужно создать переменную, в которую вы положите запрос
+
+1.1 ДОБАВЛЕНИЕ
+$sql_query = 'INSERT INTO `Tovar`(`Name`, `price`) VALUES ("ЗНАЧЕНИЕ1","ЗНАЧЕНИЕ2")';
+         ВСТАВИТЬ строку В таблицу Tovar, в столбцы Name и price, ЗНАЧЕНИЯ "ЗНАЧЕНИЕ1" и "ЗНАЧЕНИЕ2"
+
+1.2 ИЗМЕНЕНИЕ
+$sql_query = 'UPDATE `Tovar` SET `Name`="ЗНАЧЕНИЕ1",`price`="ЗНАЧЕНИЕ2" WHERE name="STEPAN"';
+            ИЗМЕНИТЬ строку в таблице Tovar, установить Name=ЗНАЧЕНИЕ1 и price=ЗНАЧЕНИЕ2, ГДЕ name=STAPAN
+
+1.3 УДАЛЕНИЕ
+$sql_query = 'DELETE FROM `Tovar` WHERE name="STEPAN"';
+            УДАЛИТЬ строку ИЗ таблицы Tovar, где name="STEPAN"
+
+1.4 ПОЛУЧЕНИЕ
+$sql_query = 'SELECT `id`, `Name`, `price` FROM `Tovar`';
+            ПОЛУЧИТЬ все id, Name и price из таблицы Tovar
+
+1.5 ПОДСТАНОВКА ПЕРЕМЕННЫХ
+Во все запросы можно подставлять переменные с данными, например при добавлении:
+$sql_query = 'INSERT INTO `Tovar`(`Name`, `price`) VALUES ($ИМЯ_ПЕРЕМЕННОЙ_1, $ИМЯ_ПЕРЕМЕННОЙ_2)';
+          ВСТАВИТЬ строку В таблицу Tovar, в столбцы Name и price, ЗНАЧЕНИЯ "ТО ЧТО ЛЕЖИТ В ИМЯ_ПЕРЕМЕННОЙ_1" и "ТО ЧТО ЛЕЖИТ В ИМЯ_ПЕРЕМЕННОЙ_2"
+
+2. Отправить запрос
+$result = $conn-&gt;query($sql_query);
+
+2.1 Если использовали INSERT или UPDATE или DELETE
+    - в $result будет лежать true или false. 
+    Далее с ней ничего особо делать не надо
+    
+2.2 Если использовали SELECT
+      $sql_query = 'SELECT `id`, `Name`, `price` FROM `Tovar`';
+      $result = $conn-&gt;query($sql_query);
+    - в $result будет лежать массив всех строк
+
+    Получение данных:
+*/
+while ($row = $result-&gt;fetch_assoc()): ?&gt;
+
+    &lt;div class='lalala'&gt;
+      &lt;h1 class='lalala2'&gt; &lt;php echo row["Name"]; ?&gt; &lt;/h1&gt;
+      &lt;p class='lalala3'&gt; &lt;php echo row["price"];  ?&gt; &lt;/p&gt;
+    &lt;/div&gt;
+
+&lt;?php endwhile; ?&gt;
+        </code></pre>
+    </div>
+
+    <div class="section">
+        <h2>Таблицы в базе данных</h2>
+        <pre><code>
+/* ТАБЛИЦЫ В БАЗЕ ДАННЫХ
+
+1. Называть таблицы и столбцы в ней нужно осознанно
+2. В таблице обязательно должен быть столбец id (главный столбец).
+   Этому столбцу нужно указать index - PRIMARY и A_I - ВКЛ 
+*/
+        </code></pre>
+    </div>
 
 </body>
 </html>

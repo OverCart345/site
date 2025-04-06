@@ -203,28 +203,28 @@ $conn = new mysqli($host, $user, $password, $dbname);</code></pre>
         </li>
         <li>
           <strong>1.1 ДОБАВЛЕНИЕ</strong><br>
-          <pre><code class="php">$sql_query = 'INSERT INTO `Tovar`(`Name`, `price`) VALUES ("ЗНАЧЕНИЕ1","ЗНАЧЕНИЕ2")';</code></pre>
-          Вставить строку в таблицу <code>Tovar</code>, в столбцы <code>Name</code> и <code>price</code> – значения "ЗНАЧЕНИЕ1" и "ЗНАЧЕНИЕ2".
+          <pre><code class="php">$sql_query = "INSERT INTO `Tovar`(`Name`, `price`) VALUES ('ЗНАЧЕНИЕ1','ЗНАЧЕНИЕ2')";</code></pre>
+          Вставить строку в таблицу <code>Tovar</code>, в столбцы <code>Name</code> и <code>price</code> – значения 'ЗНАЧЕНИЕ1' и 'ЗНАЧЕНИЕ2'.
         </li>
         <li>
           <strong>1.2 ИЗМЕНЕНИЕ</strong><br>
-          <pre><code class="php">$sql_query = 'UPDATE `Tovar` SET `Name`="ЗНАЧЕНИЕ1",`price`="ЗНАЧЕНИЕ2" WHERE name="STEPAN"';</code></pre>
-          Изменить строку в таблице <code>Tovar</code>: установить <code>Name = "ЗНАЧЕНИЕ1"</code> и <code>price = "ЗНАЧЕНИЕ2"</code> там, где <code>name = "STEPAN"</code>.
+          <pre><code class="php">$sql_query = "UPDATE `Tovar` SET `Name`='ЗНАЧЕНИЕ1',`price`='ЗНАЧЕНИЕ2' WHERE name='STEPAN'";</code></pre>
+          Изменить строку в таблице <code>Tovar</code>: установить <code>Name = 'ЗНАЧЕНИЕ1'</code> и <code>price = 'ЗНАЧЕНИЕ2'</code> там, где <code>name = 'STEPAN'</code>.
         </li>
         <li>
           <strong>1.3 УДАЛЕНИЕ</strong><br>
-          <pre><code class="php">$sql_query = 'DELETE FROM `Tovar` WHERE name="STEPAN"';</code></pre>
-          Удалить строку из таблицы <code>Tovar</code>, где <code>name = "STEPAN"</code>.
+          <pre><code class="php">$sql_query = "DELETE FROM `Tovar` WHERE name='STEPAN'";</code></pre>
+          Удалить строку из таблицы <code>Tovar</code>, где <code>name = 'STEPAN'</code>.
         </li>
         <li>
           <strong>1.4 ПОЛУЧЕНИЕ</strong><br>
-          <pre><code class="php">$sql_query = 'SELECT `id`, `Name`, `price` FROM `Tovar`';</code></pre>
+          <pre><code class="php">$sql_query = "SELECT `id`, `Name`, `price` FROM `Tovar`";</code></pre>
           Получить все <code>id</code>, <code>Name</code> и <code>price</code> из таблицы <code>Tovar</code>.
         </li>
         <li>
           <strong>1.5 ПОДСТАНОВКА ПЕРЕМЕННЫХ</strong><br>
           Во все запросы можно подставлять переменные с данными, например, при добавлении:<br>
-          <pre><code class="php">$sql_query = 'INSERT INTO `Tovar`(`Name`, `price`) VALUES ($ИМЯ_ПЕРЕМЕННОЙ_1, $ИМЯ_ПЕРЕМЕННОЙ_2)';</code></pre>
+          <pre><code class="php">$sql_query = "INSERT INTO `Tovar`(`Name`, `price`) VALUES ('$ИМЯ_ПЕРЕМЕННОЙ_1', '$ИМЯ_ПЕРЕМЕННОЙ_2')";</code></pre>
           Вставить строку в таблицу <code>Tovar</code> с данными из переменных.
         </li>
         <li>
@@ -237,7 +237,7 @@ $conn = new mysqli($host, $user, $password, $dbname);</code></pre>
         </li>
         <li>
           <strong>2.2 Если использовали SELECT</strong><br>
-          <pre><code class="php">$sql_query = 'SELECT `id`, `Name`, `price` FROM `Tovar`';
+          <pre><code class="php">$sql_query = "SELECT `id`, `Name`, `price` FROM `Tovar`";
   $result = $conn->query($sql_query);</code></pre>
           В переменной <code>$result</code> будет массив всех строк. Для получения данных используйте следующий код:
           <pre><code class="php">while ($row = $result->fetch_assoc()): ?&gt;

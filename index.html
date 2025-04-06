@@ -251,7 +251,96 @@ $conn = new mysqli($host, $user, $password, $dbname);</code></pre>
     </div>
   </div>
   
-  
+  <!-- Раздел: Работа с сессиями в PHP -->
+<div class="section">
+  <h2>Работа с сессиями в PHP</h2>
+  <div class="instructions">
+    <h3>Что такое сессия?</h3>
+    <p>
+      Сессия позволяет сохранять данные между разными страницами сайта. Это особенно полезно для авторизации пользователей, хранения информации о корзине покупок и других задач, требующих "памяти".
+    </p>
+    <p>
+      Сессии работают через уникальный идентификатор, который обычно сохраняется в cookie и передаётся с каждым запросом.
+    </p>
+  </div>
+
+  <div class="instructions">
+    <h3>Запуск сессии</h3>
+    <p>
+      Чтобы работать с сессиями, в начале <code>PHP</code>-файла нужно вызвать функцию <code>session_start();</code>.
+      Её **нужно вызывать до вывода HTML**.
+    </p>
+    <pre><code class="php">&lt;?php
+session_start(); // обязательно в начале
+?&gt;</code></pre>
+  </div>
+
+  <div class="instructions">
+    <h3>Пример: авторизация и хранение имени пользователя</h3>
+    <p>Сохраняем имя пользователя в сессию после входа:</p>
+    <pre><code class="php">&lt;?php
+session_start();
+
+$username = $_POST['username'];
+$password = $_POST['password'];
+
+// Здесь может быть проверка логина и пароля
+
+$_SESSION['username'] = $username; // сохраняем имя пользователя
+header("Location: news.php"); // перенаправляем
+exit();
+?&gt;</code></pre>
+  </div>
+
+  <div class="instructions">
+    <h3>Проверка: вошёл ли пользователь</h3>
+    <pre><code class="php">&lt;?php
+session_start();
+
+if (isset($_SESSION['username'])) {
+  echo "Добро пожаловать, " . $_SESSION['username'];
+} else {
+  echo "Пожалуйста, войдите в систему.";
+}
+?&gt;</code></pre>
+  </div>
+
+  <div class="instructions">
+    <h3>Защита страниц от неавторизованных пользователей</h3>
+    <pre><code class="php">&lt;?php
+session_start();
+
+if (!isset($_SESSION['username'])) {
+  header("Location: login.php");
+  exit();
+}
+?&gt;</code></pre>
+    <p>Если пользователь не вошёл — его перекинет на страницу входа.</p>
+  </div>
+
+  <div class="instructions">
+    <h3>Выход пользователя</h3>
+    <p>Для выхода можно удалить все данные сессии:</p>
+    <pre><code class="php">&lt;?php
+session_start();
+
+session_unset(); // очищает все переменные сессии
+session_destroy(); // уничтожает саму сессию
+header("Location: login.php"); // перенаправляем на вход
+exit();
+?&gt;</code></pre>
+  </div>
+
+  <div class="instructions">
+    <h3>Дополнительно</h3>
+    <ul>
+      <li><code>$_SESSION</code> — это массив, доступный после вызова <code>session_start()</code>.</li>
+      <li>Сессии хранятся на сервере (временные файлы), а у пользователя — только ID сессии.</li>
+      <li>Сессии автоматически уничтожаются, если пользователь долго не активен (зависит от настроек сервера).</li>
+    </ul>
+  </div>
+</div>
+
   
   
   <!-- Подключаем Highlight.js для подсветки синтаксиса -->

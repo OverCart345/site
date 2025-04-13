@@ -252,94 +252,215 @@ $conn = new mysqli($host, $user, $password, $dbname);</code></pre>
   </div>
   
   <!-- Раздел: Работа с сессиями в PHP -->
-<div class="section">
-  <h2>Работа с сессиями в PHP</h2>
-  <div class="instructions">
-    <h3>Что такое сессия?</h3>
-    <p>
-      Сессия позволяет сохранять данные между разными страницами сайта. Это особенно полезно для авторизации пользователей, хранения информации о корзине покупок и других задач, требующих "памяти".
-    </p>
-    <p>
-      Сессии работают через уникальный идентификатор, который обычно сохраняется в cookie и передаётся с каждым запросом.
-    </p>
-  </div>
+ <!-- Раздел: Работа с сессиями в PHP -->
+  <div class="section">
+    <h2>Работа с сессиями в PHP</h2>
+    <div class="instructions">
+      <h3>Что такое сессия?</h3>
+      <p>
+        Сессия позволяет сохранять данные между различными страницами сайта. Это полезно для реализации авторизации, хранения информации о пользователе, корзины покупок и других задач, где требуется "память" между запросами.
+      </p>
+      <p>
+        Сессия работает через уникальный идентификатор, который обычно сохраняется в cookie браузера и передаётся с каждым запросом.
+      </p>
+    </div>
 
-  <div class="instructions">
-    <h3>Запуск сессии</h3>
-    <p>
-      Чтобы работать с сессиями, в начале <code>PHP</code>-файла нужно вызвать функцию <code>session_start();</code>.
-      Её **нужно вызывать до вывода HTML**.
-    </p>
-    <pre><code class="php">&lt;?php
-session_start(); // обязательно в начале
-?&gt;</code></pre>
-  </div>
-
-  <div class="instructions">
-    <h3>Пример: авторизация и хранение имени пользователя</h3>
-    <p>Сохраняем имя пользователя в сессию после входа:</p>
-    <pre><code class="php">&lt;?php
+    <div class="instructions">
+      <h3>Запуск сессии</h3>
+      <p>
+        Для начала работы с сессией необходимо вызвать <code>session_start();</code> в самом начале PHP-файла – до любого вывода HTML. Это гарантирует корректную работу сессии на всех страницах.
+      </p>
+      <pre><code class="php">&lt;?php
+// Инициализация сессии. Обязательно размещать в самом начале файла!
 session_start();
-
-$username = $_POST['username'];
-$password = $_POST['password'];
-
-// Здесь может быть проверка логина и пароля
-
-$_SESSION['username'] = $username; // сохраняем имя пользователя
-header("Location: news.php"); // перенаправляем
-exit();
 ?&gt;</code></pre>
-  </div>
+    </div>
 
-  <div class="instructions">
-    <h3>Проверка: вошёл ли пользователь</h3>
-    <pre><code class="php">&lt;?php
+    <div class="instructions">
+      <h3>Проверка авторизации пользователя</h3>
+      <p>
+        На защищённых страницах можно проверить, авторизован ли пользователь, используя массив <code>$_SESSION</code>.
+      </p>
+      <pre><code class="php">&lt;?php
 session_start();
 
 if (isset($_SESSION['username'])) {
-  echo "Добро пожаловать, " . $_SESSION['username'];
+    echo "Добро пожаловать, " . htmlspecialchars($_SESSION['username']);
 } else {
-  echo "Пожалуйста, войдите в систему.";
+    echo "Пожалуйста, войдите в систему.";
 }
 ?&gt;</code></pre>
-  </div>
+      <p>
+        Здесь используется функция <code>htmlspecialchars</code> для предотвращения XSS-уязвимостей при выводе пользовательских данных.
+      </p>
+    </div>
 
-  <div class="instructions">
-    <h3>Защита страниц от неавторизованных пользователей</h3>
-    <pre><code class="php">&lt;?php
+    <div class="instructions">
+      <h3>Защита страниц от неавторизованных пользователей</h3>
+      <pre><code class="php">&lt;?php
 session_start();
 
+// Если пользователь не авторизован – перенаправляем на страницу входа
 if (!isset($_SESSION['username'])) {
-  header("Location: login.php");
-  exit();
+    header("Location: login.php");
+    exit();
 }
 ?&gt;</code></pre>
-    <p>Если пользователь не вошёл — его перекинет на страницу входа.</p>
-  </div>
+      <p>
+        Такой подход гарантирует, что доступ к странице получат только авторизованные пользователи.
+      </p>
+    </div>
 
-  <div class="instructions">
-    <h3>Выход пользователя</h3>
-    <p>Для выхода можно удалить все данные сессии:</p>
-    <pre><code class="php">&lt;?php
+    <div class="instructions">
+      <h3>Выход пользователя</h3>
+      <p>Для завершения сессии и выхода пользователя можно удалить данные сессии и завершить саму сессию.</p>
+      <pre><code class="php">&lt;?php
 session_start();
 
-session_unset(); // очищает все переменные сессии
-session_destroy(); // уничтожает саму сессию
-header("Location: login.php"); // перенаправляем на вход
+// Удаляем все данные сессии и завершаем сессию
+session_unset();
+session_destroy();
+
+header("Location: login.php");
 exit();
 ?&gt;</code></pre>
+    </div>
+
+    <div class="instructions">
+      <h3>Дополнительно</h3>
+      <ul>
+        <li><code>$_SESSION</code> — это суперглобальный массив, доступный после вызова <code>session_start()</code>.</li>
+        <li>Сессионные данные хранятся на сервере, а в браузере – только идентификатор сессии.</li>
+        <li>При длительной неактивности сессии могут автоматически удаляться (настройки сервера).</li>
+      </ul>
+    </div>
   </div>
 
-  <div class="instructions">
-    <h3>Дополнительно</h3>
-    <ul>
-      <li><code>$_SESSION</code> — это массив, доступный после вызова <code>session_start()</code>.</li>
-      <li>Сессии хранятся на сервере (временные файлы), а у пользователя — только ID сессии.</li>
-      <li>Сессии автоматически уничтожаются, если пользователь долго не активен (зависит от настроек сервера).</li>
-    </ul>
+  <!-- Пример: Страница регистрации -->
+  <div class="section">
+    <h2>Страница регистрации</h2>
+    <p>Форма регистрации, которая отправляет данные на сервер для создания нового пользователя:</p>
+    <pre><code class="html">&lt;form method="post" action="register.php"&gt;
+  &lt;input type="text" name="username" placeholder="Логин" required&gt;
+  &lt;input type="password" name="pass" placeholder="Пароль" required&gt;
+  &lt;input type="submit" value="Зарегистрироваться"&gt;
+&lt;/form&gt;
+</code></pre>
+
+    <p>Файл <code>register.php</code>:</p>
+    <pre><code class="php">&lt;?php
+// register.php
+session_start();
+
+// Настройки подключения к базе данных
+$host = 'MySQL-8.2';
+$user = 'root';
+$password = '';
+$dbname = 'Magazin';
+
+$conn = new mysqli($host, $user, $password, $dbname);
+if ($conn->connect_error) {
+    die("Ошибка подключения: " . $conn->connect_error);
+}
+
+// Проверяем, переданы ли данные из формы
+if (isset($_POST['username']) && isset($_POST['pass'])) {
+    // Очищаем и валидируем входные данные
+    $username = trim($_POST['username']);
+    $pass = trim($_POST['pass']);
+    
+    // Хешируем пароль для безопасности
+    $passHash = password_hash($pass, PASSWORD_DEFAULT);
+    
+    // Подготавливаем запрос для предотвращения SQL-инъекций
+    $stmt = $conn->prepare("INSERT INTO `user` (`username`, `pass`) VALUES (?, ?)");
+    $stmt->bind_param("ss", $username, $passHash);
+    
+    if ($stmt->execute()) {
+        echo "Регистрация прошла успешно. &lt;a href='login.php'&gt;Войти&lt;/a&gt;";
+    } else {
+        echo "Ошибка: " . $stmt->error;
+    }
+    $stmt->close();
+}
+$conn->close();
+?&gt;</code></pre>
   </div>
-</div>
+
+  <!-- Пример: Страница авторизации -->
+  <div class="section">
+    <h2>Страница авторизации</h2>
+    <div>
+      <h3>
+        &lt;?php
+          session_start();
+          if (isset($_SESSION['username'])) {
+            echo "Добро пожаловать, " . htmlspecialchars($_SESSION['username']);
+          } else {
+            echo "Пожалуйста, войдите в систему.";
+          }
+        ?&gt;
+      </h3>
+    </div>
+    <p>Форма авторизации для входа пользователя:</p>
+    <pre><code class="html">&lt;form method="post" action="login.php"&gt;
+  &lt;input type="text" name="username" placeholder="Логин" required&gt;
+  &lt;input type="password" name="pass" placeholder="Пароль" required&gt;
+  &lt;input type="submit" value="Войти"&gt;
+&lt;/form&gt;
+</code></pre>
+
+    <p>Файл <code>login.php</code>:</p>
+    <pre><code class="php">&lt;?php
+// login.php
+session_start();
+
+// Настройки подключения к базе данных
+$host = 'MySQL-8.2';
+$user = 'root';
+$password = '';
+$dbname = 'Magazin';
+
+$conn = new mysqli($host, $user, $password, $dbname);
+if ($conn->connect_error) {
+    die("Ошибка подключения: " . $conn->connect_error);
+}
+
+// Проверяем, переданы ли данные авторизации
+if (isset($_POST['username']) && isset($_POST['pass'])) {
+    $username = trim($_POST['username']);
+    $pass = trim($_POST['pass']);
+    
+    // Подготавливаем запрос для поиска пользователя
+    $stmt = $conn->prepare("SELECT `pass` FROM `user` WHERE `username` = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $stmt->store_result();
+    
+    // Если пользователь найден, проверяем правильность пароля
+    if ($stmt->num_rows > 0) {
+        $stmt->bind_result($passHash);
+        $stmt->fetch();
+        
+        if (password_verify($pass, $passHash)) {
+            // Успешная авторизация:
+            // Регенерируем идентификатор сессии для защиты от фиксации сессии
+            session_regenerate_id(true);
+            $_SESSION['username'] = $username;
+            
+            header("Location: news.php");
+            exit();
+        } else {
+            echo "&lt;h1&gt;Неправильный пароль&lt;/h1&gt;";
+        }
+    } else {
+        echo "&lt;h1&gt;Пользователь не найден&lt;/h1&gt;";
+    }
+    $stmt->close();
+}
+$conn->close();
+?&gt;</code></pre>
+  </div>
 
   
   

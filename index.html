@@ -341,6 +341,129 @@ exit();
   </div>
 </div>
 
+  <!-- Пример: регистрация -->
+  <div class="section">
+    <h2>Пример: регистрация</h2>
+    <div class="instructions">
+      <p>Создаём файл <code>register.php</code> с кодом ниже:</p>
+    </div>
+    <pre><code class="php">&lt;!-- register.php --&gt;
+&lt;?php
+session_start();
+
+// Параметры подключения к БД
+$host     = 'MySQL-8.2';
+$user     = 'root';
+$password = '';
+$dbname   = 'Magazin';
+
+$conn = new mysqli($host, $user, $password, $dbname);
+if ($conn-&gt;connect_error) {
+    die('Ошибка подключения: ' . $conn-&gt;connect_error);
+}
+
+$message = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' &amp;&amp; $_POST['action'] === 'register') {
+    $username = $conn-&gt;real_escape_string($_POST['username']);
+    $pass     = password_hash($_POST['pass'], PASSWORD_DEFAULT);
+
+    $sql = "INSERT INTO `user` (`username`, `pass`) VALUES ('$username', '$pass')";
+    if ($conn-&gt;query($sql)) {
+        $message = 'Регистрация прошла успешно, можете &lt;a href="login.php"&gt;войти&lt;/a&gt;.';
+    } else {
+        $message = 'Ошибка регистрации: ' . $conn-&gt;error;
+    }
+}
+?&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ru"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Регистрация&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Регистрация&lt;/h1&gt;
+  &lt;?php if ($message): ?&gt;
+    &lt;p&gt;&lt;?= $message ?&gt;&lt;/p&gt;
+  &lt;?php endif; ?&gt;
+  &lt;form method="post" action=""&gt;
+    &lt;input type="hidden" name="action" value="register"&gt;
+    &lt;p&gt;&lt;input type="text" name="username" placeholder="Логин" required&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;input type="password" name="pass" placeholder="Пароль" required&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;input type="submit" value="Зарегистрироваться"&gt;&lt;/p&gt;
+  &lt;/form&gt;
+  &lt;p&gt;Уже есть аккаунт? &lt;a href="login.php"&gt;Войти&lt;/a&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+  </div>
+
+  <!-- Пример: вход -->
+  <div class="section">
+    <h2>Пример: вход</h2>
+    <div class="instructions">
+      <p>Создаём файл <code>login.php</code> с кодом ниже:</p>
+    </div>
+    <pre><code class="php">&lt;!-- login.php --&gt;
+&lt;?php
+session_start();
+
+// Параметры подключения к БД
+$host     = 'MySQL-8.2';
+$user     = 'root';
+$password = '';
+$dbname   = 'Magazin';
+
+$conn = new mysqli($host, $user, $password, $dbname);
+if ($conn-&gt;connect_error) {
+    die('Ошибка подключения: ' . $conn-&gt;connect_error);
+}
+
+$error = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' &amp;&amp; $_POST['action'] === 'login') {
+    $username = $conn-&gt;real_escape_string($_POST['username']);
+    $pass     = $_POST['pass'];
+
+    $sql    = "SELECT `pass` FROM `user` WHERE `username`='$username' LIMIT 1";
+    $result = $conn-&gt;query($sql);
+
+    if ($result &amp;&amp; $row = $result-&gt;fetch_assoc()) {
+        if (password_verify($pass, $row['pass'])) {
+            $_SESSION['username'] = $username;
+            header('Location: protected.php');
+            exit();
+        } else {
+            $error = 'Неверный пароль.';
+        }
+    } else {
+        $error = 'Пользователь не найден.';
+    }
+}
+?&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ru"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Вход&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Авторизация&lt;/h1&gt;
+  &lt;?php if ($error): ?&gt;
+    &lt;p style="color:red;"&gt;&lt;?= $error ?&gt;&lt;/p&gt;
+  &lt;?php endif; ?&gt;
+  &lt;form method="post" action=""&gt;
+    &lt;input type="hidden" name="action" value="login"&gt;
+    &lt;p&gt;&lt;input type="text" name="username" placeholder="Логин" required&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;input type="password" name="pass" placeholder="Пароль" required&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;input type="submit" value="Войти"&gt;&lt;/p&gt;
+  &lt;/form&gt;
+  &lt;p&gt;Нет аккаунта? &lt;a href="register.php"&gt;Зарегистрироваться&lt;/a&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+  </div>
   
   
   <!-- Подключаем Highlight.js для подсветки синтаксиса -->

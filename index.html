@@ -341,129 +341,84 @@ exit();
   </div>
 </div>
 
-  <!-- Пример: регистрация -->
-  <div class="section">
-    <h2>Пример: регистрация</h2>
-    <div class="instructions">
-      <p>Создаём файл <code>register.php</code> с кодом ниже:</p>
-    </div>
-    <pre><code class="php">&lt;!-- register.php --&gt;
+<!-- Пример: Авторизация -->
+<div class="instructions">
+  <h3>Пример: Авторизация</h3>
+  <pre><code class="php">
+&lt;h1&gt;&lt;br&gt;&lt;br&gt;АВТОРИЗАЦИЯ&lt;/h1&gt;
+&lt;form method=&quot;post&quot;&gt;
+  &lt;input type=&quot;text&quot; name=&quot;username&quot; placeholder=&quot;Логин&quot;&gt;
+  &lt;input type=&quot;text&quot; name=&quot;pass&quot; placeholder=&quot;Пароль&quot;&gt;
+
+  
+  &lt;input type=&quot;submit&quot;&gt;
+&lt;/form&gt;
+
 &lt;?php
-session_start();
 
-// Параметры подключения к БД
-$host     = 'MySQL-8.2';
-$user     = 'root';
-$password = '';
-$dbname   = 'Magazin';
-
+$host = 'MySQL-8.2'; // Хост базы данных
+$user = 'root';      // Имя пользователя
+$password = '';      // Пароль (по умолчанию пустой)
+$dbname = 'Magazin'; // Название базы данных
 $conn = new mysqli($host, $user, $password, $dbname);
-if ($conn-&gt;connect_error) {
-    die('Ошибка подключения: ' . $conn-&gt;connect_error);
-}
 
-$message = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' &amp;&amp; $_POST['action'] === 'register') {
-    $username = $conn-&gt;real_escape_string($_POST['username']);
-    $pass     = password_hash($_POST['pass'], PASSWORD_DEFAULT);
+$username = &quot;&quot;;
+$pass     = &quot;&quot;;
 
-    $sql = "INSERT INTO `user` (`username`, `pass`) VALUES ('$username', '$pass')";
-    if ($conn-&gt;query($sql)) {
-        $message = 'Регистрация прошла успешно, можете &lt;a href="login.php"&gt;войти&lt;/a&gt;.';
-    } else {
-        $message = 'Ошибка регистрации: ' . $conn-&gt;error;
-    }
+if (isset($_POST[&quot;username&quot;]) &amp;&amp; isset($_POST[&quot;pass&quot;])) {
+
+  $username = $_POST[&quot;username&quot;];
+  $pass     = $_POST[&quot;pass&quot;];
+  
+  $sql_query = &quot;SELECT * FROM `user` WHERE `username`='$username' AND `pass`='$pass'&quot;;
+  $result    = $conn-&gt;query($sql_query);
+
+  if ($result-&gt;num_rows &gt; 0) {
+
+    $_SESSION['username'] = $username;
+
+  } else {
+    echo &quot;&lt;h1&gt;НЕПРАВИЛЬНЫЕ ДАННЫЕ&lt;/h1&gt;&quot;;
+  }
 }
 ?&gt;
+  </code></pre>
+</div>
 
-&lt;!DOCTYPE html&gt;
-&lt;html lang="ru"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Регистрация&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h1&gt;Регистрация&lt;/h1&gt;
-  &lt;?php if ($message): ?&gt;
-    &lt;p&gt;&lt;?= $message ?&gt;&lt;/p&gt;
-  &lt;?php endif; ?&gt;
-  &lt;form method="post" action=""&gt;
-    &lt;input type="hidden" name="action" value="register"&gt;
-    &lt;p&gt;&lt;input type="text" name="username" placeholder="Логин" required&gt;&lt;/p&gt;
-    &lt;p&gt;&lt;input type="password" name="pass" placeholder="Пароль" required&gt;&lt;/p&gt;
-    &lt;p&gt;&lt;input type="submit" value="Зарегистрироваться"&gt;&lt;/p&gt;
-  &lt;/form&gt;
-  &lt;p&gt;Уже есть аккаунт? &lt;a href="login.php"&gt;Войти&lt;/a&gt;&lt;/p&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-</code></pre>
-  </div>
+<!-- Пример: Регистрация -->
+<div class="instructions">
+  <h3>Пример: Регистрация</h3>
+  <pre><code class="php">
+&lt;form method=&quot;post&quot;&gt;
+  &lt;input type=&quot;text&quot; name=&quot;username&quot; placeholder=&quot;Логин&quot;&gt;
+  &lt;input type=&quot;text&quot; name=&quot;pass&quot; placeholder=&quot;Пароль&quot;&gt;
 
-  <!-- Пример: вход -->
-  <div class="section">
-    <h2>Пример: вход</h2>
-    <div class="instructions">
-      <p>Создаём файл <code>login.php</code> с кодом ниже:</p>
-    </div>
-    <pre><code class="php">&lt;!-- login.php --&gt;
+  
+  &lt;input type=&quot;submit&quot;&gt;
+&lt;/form&gt;
+  
 &lt;?php
-session_start();
 
-// Параметры подключения к БД
-$host     = 'MySQL-8.2';
-$user     = 'root';
-$password = '';
-$dbname   = 'Magazin';
-
+$host = 'MySQL-8.2'; // Хост базы данных
+$user = 'root';      // Имя пользователя
+$password = '';      // Пароль (по умолчанию пустой)
+$dbname = 'Magazin'; // Название базы данных
 $conn = new mysqli($host, $user, $password, $dbname);
-if ($conn-&gt;connect_error) {
-    die('Ошибка подключения: ' . $conn-&gt;connect_error);
-}
 
-$error = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' &amp;&amp; $_POST['action'] === 'login') {
-    $username = $conn-&gt;real_escape_string($_POST['username']);
-    $pass     = $_POST['pass'];
+$username = &quot;&quot;;
+$pass     = &quot;&quot;;
 
-    $sql    = "SELECT `pass` FROM `user` WHERE `username`='$username' LIMIT 1";
-    $result = $conn-&gt;query($sql);
+if (isset($_POST[&quot;username&quot;]) &amp;&amp; isset($_POST[&quot;pass&quot;])) {
 
-    if ($result &amp;&amp; $row = $result-&gt;fetch_assoc()) {
-        if (password_verify($pass, $row['pass'])) {
-            $_SESSION['username'] = $username;
-            header('Location: protected.php');
-            exit();
-        } else {
-            $error = 'Неверный пароль.';
-        }
-    } else {
-        $error = 'Пользователь не найден.';
-    }
+  $username = $_POST[&quot;username&quot;];
+  $pass     = $_POST[&quot;pass&quot;];
+  
+  $sql_query = &quot;INSERT INTO `user` (`username`, `pass`) VALUES ('$username', '$pass')&quot;;
+  $result    = $conn-&gt;query($sql_query);
 }
 ?&gt;
-
-&lt;!DOCTYPE html&gt;
-&lt;html lang="ru"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;Вход&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h1&gt;Авторизация&lt;/h1&gt;
-  &lt;?php if ($error): ?&gt;
-    &lt;p style="color:red;"&gt;&lt;?= $error ?&gt;&lt;/p&gt;
-  &lt;?php endif; ?&gt;
-  &lt;form method="post" action=""&gt;
-    &lt;input type="hidden" name="action" value="login"&gt;
-    &lt;p&gt;&lt;input type="text" name="username" placeholder="Логин" required&gt;&lt;/p&gt;
-    &lt;p&gt;&lt;input type="password" name="pass" placeholder="Пароль" required&gt;&lt;/p&gt;
-    &lt;p&gt;&lt;input type="submit" value="Войти"&gt;&lt;/p&gt;
-  &lt;/form&gt;
-  &lt;p&gt;Нет аккаунта? &lt;a href="register.php"&gt;Зарегистрироваться&lt;/a&gt;&lt;/p&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-</code></pre>
-  </div>
+  </code></pre>
+</div>
   
   
   <!-- Подключаем Highlight.js для подсветки синтаксиса -->
